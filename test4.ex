@@ -1,4 +1,4 @@
-record = File.read!("sales.txt")
+record = File.read!("sales.csv")
               |> String.split("\n")
               |> Enum.map(&String.split(&1,","))
 
@@ -21,3 +21,4 @@ month_sales = record
             fn [_date, value] -> value end
             )
             |> IO.inspect()
+
