@@ -6,16 +6,14 @@ records = File.read!("sales.csv")
 
 items = rows
         |> Enum.map( fn row -> headers |> Enum.zip(row) |> Map.new end)
-        |> Enum.group_by(fn %{"SKU"=> product_name } -> product_name end, fn %{"Quantity"=> quantity } -> String.to_integer(quantity) end )
-        |> Enum.reduce(%{}, fn ({product_name, quantity}, acc) -> Map.put(acc, product_name, Enum.count(quantity)) end)
+        |> Enum.group_by(fn %{"SKU"=> product} -> product end, fn %{"Quantity"=> quantity, "Date"=> date } -> %{ date: date, quantity: String.to_integer(quantity) } end )
+        |> Enum.map(fn {product, quantity} ->
+          {
+            product,
+            Enum.group_by(quantity, &(String.slice(&1.date, 0, 7)), &(&1.quantity))
+            |> Enum.map(fn {k, v} -> %{date: k, quantity: Enum.sum(v)} end)}
+        end) |> Map.new()
         |> IO.inspect
-
-
-# month = rows
-#         |> Enum.group_by(fn )
-#         |> IO.inspect
-
-
 
 
 
